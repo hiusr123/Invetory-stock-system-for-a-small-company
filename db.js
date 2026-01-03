@@ -40,7 +40,7 @@
       const text = await res.text();
       return text ? JSON.parse(text) : { success: true };
     } catch (err) {
-      console.error("Connection Error:", err);
+        console.error("Connection Error:", err);
       return { error: true, message: err.message };
     }
   }
@@ -123,6 +123,7 @@
     }
   };
 })();
+
 
 
 
