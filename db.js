@@ -31,12 +31,14 @@
     if (body) options.body = JSON.stringify(body);
     try {
       const res = await fetch(`${SUPABASE_URL}/rest/v1/${endpoint}`, options);
+      if (res.status === 204) return { success: true };
       if (!res.ok) {
         const errorData = await res.json();
         console.error("Supabase Error:", errorData);
         return errorData;
       }
-      return await res.json();
+      const text = await res.text();
+      return text ? JSON.parse(text) : { success: true };
     } catch (err) {
       console.error("Connection Error:", err);
       return { error: true, message: err.message };
@@ -121,6 +123,7 @@
     }
   };
 })();
+
 
 
 
