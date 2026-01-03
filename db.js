@@ -1,23 +1,20 @@
 // db.js
 (function() {
-  // These variables stay empty on GitHub
   let SUPABASE_URL = localStorage.getItem('MY_PRIVATE_URL');
   let SUPABASE_KEY = localStorage.getItem('MY_PRIVATE_KEY');
 
-  // If you are opening this for the first time, it will ask you for the info
   if (!SUPABASE_URL || !SUPABASE_KEY) {
     const url = prompt("Setup: Paste your Supabase URL");
     const key = prompt("Setup: Paste your Supabase Anon Key");
-    
     if (url && key) {
-      localStorage.setItem('MY_PRIVATE_URL', url);
+      localStorage.setItem('MY_PRIVATE_URL', url.replace(/\/$/, "")); // Remove trailing slash
       localStorage.setItem('MY_PRIVATE_KEY', key);
-      location.reload(); // Refresh to start the app with the new keys
+      location.reload();
     }
-    return; // Stop running until keys are provided
+    return;
   }
 
-  // Define the API bridge
+  // FIXED API BRIDGE
   async function api(endpoint, method = 'GET', body = null, isUpsert = false) {
     const options = {
       method,
@@ -25,22 +22,30 @@
         'apikey': SUPABASE_KEY,
         'Authorization': `Bearer ${SUPABASE_KEY}`,
         'Content-Type': 'application/json',
-        'Prefer': isUpsert ? 'resolution=merge-duplicates' : 'return=representation'
+        'Prefer': isUpsert ? 'resolution=merge-duplicates' : 'return=minimal'
       }
     };
+    
     if (body) options.body = JSON.stringify(body);
+    
     try {
       const res = await fetch(`${SUPABASE_URL}/rest/v1/${endpoint}`, options);
-      if (res.status === 204) return { success: true };
-      if (!res.ok) {
-        const errorData = await res.json();
-        console.error("Supabase Error:", errorData);
-        return errorData;
+
+      // Handle "No Content" (Status 204) - Fixes your JSON.parse error
+      if (res.status === 204 || res.statusText === 'No Content') {
+        return { success: true };
       }
+
       const text = await res.text();
-      return text ? JSON.parse(text) : { success: true };
+      const data = text ? JSON.parse(text) : { success: true };
+
+      if (!res.ok) {
+        console.error("Supabase Error:", data);
+        return data;
+      }
+      return data;
     } catch (err) {
-        console.error("Connection Error:", err);
+      console.error("Connection Error:", err);
       return { error: true, message: err.message };
     }
   }
@@ -48,23 +53,19 @@
   window.InventoryDB = {
     init: async () => true,
     
-    // Returns products as a local object { "BARCODE": {data} }
     exportProductsObject: async () => {
       const data = await api('products?select=*');
       const obj = {};
-      // Ensure data is an array before looping
       if (Array.isArray(data)) {
         data.forEach(p => { obj[p.barcode] = p; });
       }
       return obj;
     },
 
-    // Upserts a single product
     putProduct: async (barcode, product) => {
-      return api('products', 'POST', { barcode, ...product });
+      return api('products', 'POST', { barcode, ...product }, true);
     },
 
-    // Upserts multiple products at once (Used for Restore/Bulk operations)
     bulkPutProducts: async (productObj) => {
       const list = Object.keys(productObj).map(id => ({
         barcode: id,
@@ -91,21 +92,18 @@
       return api(`products?barcode=eq.${barcode}`, 'DELETE');
     },
 
-    // --- Project Allocations ---
-    // Note: We use the 'key' as a unique identifier in the settings table
     saveAllProjects: async (projectsObj) => {
       return api('settings', 'POST', { 
         key: 'project_allocations', 
         value: projectsObj 
-      }, true);
+      }, true); 
     },
 
     loadAllProjects: async () => {
       const res = await api('settings?key=eq.project_allocations&select=value');
-      return res[0]?.value || {};
+      return (Array.isArray(res) && res[0]) ? res[0].value : {};
     },
 
-    // --- Categories ---
     saveCategories: async (catArray) => {
       return api('settings', 'POST', { 
         key: 'categories', 
@@ -115,16 +113,12 @@
 
     loadCategories: async () => {
       const res = await api('settings?key=eq.categories&select=value');
-      return res[0]?.value || ['Default'];
+      return (Array.isArray(res) && res[0]) ? res[0].value : ['Default'];
     },
+
     resetKeys: () => {
       localStorage.clear();
       location.reload();
     }
   };
 })();
-
-
-
-
-
