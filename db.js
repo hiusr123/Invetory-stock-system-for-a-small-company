@@ -7,14 +7,13 @@
     const url = prompt("Setup: Paste your Supabase URL");
     const key = prompt("Setup: Paste your Supabase Anon Key");
     if (url && key) {
-      localStorage.setItem('MY_PRIVATE_URL', url.replace(/\/$/, "")); // Remove trailing slash
+      localStorage.setItem('MY_PRIVATE_URL', url.replace(/\/$/, "")); 
       localStorage.setItem('MY_PRIVATE_KEY', key);
       location.reload();
     }
     return;
   }
 
-  // FIXED API BRIDGE
   async function api(endpoint, method = 'GET', body = null, isUpsert = false) {
     const options = {
       method,
@@ -31,7 +30,6 @@
     try {
       const res = await fetch(`${SUPABASE_URL}/rest/v1/${endpoint}`, options);
 
-      // Handle "No Content" (Status 204) - Fixes your JSON.parse error
       if (res.status === 204 || res.statusText === 'No Content') {
         return { success: true };
       }
@@ -122,3 +120,4 @@
     }
   };
 })();
+
