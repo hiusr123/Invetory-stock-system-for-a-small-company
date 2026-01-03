@@ -18,13 +18,14 @@
   }
 
   // Define the API bridge
-  async function api(endpoint, method = 'GET', body = null) {
+  async function api(endpoint, method = 'GET', body = null, isUpsert = false) {
     const options = {
       method,
       headers: {
         'apikey': SUPABASE_KEY,
         'Authorization': `Bearer ${SUPABASE_KEY}`,
         'Content-Type': 'application/json'
+        'Prefer': isUpsert ? 'resolution=merge-duplicates' : 'return=representation'
       }
     };
     if (body) options.body = JSON.stringify(body);
@@ -97,7 +98,7 @@
       return api('settings', 'POST', { 
         key: 'categories', 
         value: catArray 
-      });
+      }, true);
     },
 
     loadCategories: async () => {
@@ -106,4 +107,5 @@
     }
   };
 })();
+
 
