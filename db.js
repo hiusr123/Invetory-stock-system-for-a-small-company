@@ -24,13 +24,23 @@
       headers: {
         'apikey': SUPABASE_KEY,
         'Authorization': `Bearer ${SUPABASE_KEY}`,
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
         'Prefer': isUpsert ? 'resolution=merge-duplicates' : 'return=representation'
       }
     };
     if (body) options.body = JSON.stringify(body);
-    const res = await fetch(`${SUPABASE_URL}/rest/v1/${endpoint}`, options);
-    return res.json();
+    try {
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/${endpoint}`, options);
+      if (!res.ok) {
+        const errorData = await res.json();
+        console.error("Supabase Error:", errorData);
+        return errorData;
+      }
+      return await res.json();
+    } catch (err) {
+      console.error("Connection Error:", err);
+      return { error: true, message: err.message };
+    }
   }
 
   window.InventoryDB = {
@@ -58,7 +68,7 @@
         barcode: id,
         ...productObj[id]
       }));
-      return api('products', 'POST', list);
+      return api('products', 'POST', list, true);
     },
 
     addTransaction: async (tx) => {
@@ -85,7 +95,7 @@
       return api('settings', 'POST', { 
         key: 'project_allocations', 
         value: projectsObj 
-      });
+      }, true);
     },
 
     loadAllProjects: async () => {
@@ -104,8 +114,13 @@
     loadCategories: async () => {
       const res = await api('settings?key=eq.categories&select=value');
       return res[0]?.value || ['Default'];
+    },
+    resetKeys: () => {
+      localStorage.clear();
+      location.reload();
     }
   };
 })();
+
 
 
