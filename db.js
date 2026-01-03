@@ -1,18 +1,20 @@
 // db.js
 (function() {
-  // Use "const" so these can't be changed easily in the console
-  const SUPABASE_URL = 'PASTE_YOUR_SUPABASE_URL_HERE';
-  const SUPABASE_KEY = 'PASTE_YOUR_SUPABASE_ANON_KEY_HERE';
-  const SECRET_ACCESS_KEY = 'choose_your_secret_password'; // e.g., 'my-storage-789'
+  // These variables stay empty on GitHub
+  let SUPABASE_URL = localStorage.getItem('MY_PRIVATE_URL');
+  let SUPABASE_KEY = localStorage.getItem('MY_PRIVATE_KEY');
 
-  // SECRET URL LOGIC
-  const urlParams = new URLSearchParams(window.location.search);
-  const userKey = urlParams.get('access');
-
-  if (userKey !== SECRET_ACCESS_KEY) {
-    console.error("Access Denied");
-    document.body.innerHTML = "<div style='text-align:center; margin-top:100px;'><h1>404 Not Found</h1></div>";
-    return;
+  // If you are opening this for the first time, it will ask you for the info
+  if (!SUPABASE_URL || !SUPABASE_KEY) {
+    const url = prompt("Setup: Paste your Supabase URL");
+    const key = prompt("Setup: Paste your Supabase Anon Key");
+    
+    if (url && key) {
+      localStorage.setItem('MY_PRIVATE_URL', url);
+      localStorage.setItem('MY_PRIVATE_KEY', key);
+      location.reload(); // Refresh to start the app with the new keys
+    }
+    return; // Stop running until keys are provided
   }
 
   // Define the API bridge
@@ -104,3 +106,4 @@
     }
   };
 })();
+
