@@ -107,6 +107,22 @@ GRANT ALL ON SEQUENCE transactions_id_seq TO public;
 
 ---
 
+## ⚠️ Known Limitations
+
+> [!IMPORTANT]
+> **Search by ProjectCode**
+> The "Search by ProjectCode" tool currently scans only the `project` and `reason` fields within the Transaction History. If a ProjectCode was not explicitly typed into the **Note** or **Project Name** field during a stock movement, it will not appear in these specific search results.
+
+> [!TIP]
+> **Database Latency**
+> As a client-side application, performing high-volume bulk actions in rapid succession may result in local state lag. It is recommended to press **F5** after large imports to ensure the UI perfectly reflects the latest cloud data.
+
+> [!WARNING]
+> **Security & Access**
+> This application uses the `anon` key for ease of deployment. While Row Level Security (RLS) is active, anyone with your specific **Supabase URL** and **Key** can access the data. Keep these credentials private.
+
+---
+
 ## 🛠 Tech Stack
 * **Frontend**: Modern HTML5, CSS3 (Flexbox/Grid), and Vanilla JavaScript (ES6+).
 * **Database**: **Supabase** (PostgreSQL Database + PostgREST API).
