@@ -1,6 +1,7 @@
 # 📦 Cloud-Sync Inventory Management System
 
 A professional, lightweight inventory solution built for warehouse operations and stock management. This application provides real-time cloud syncing, project-based stock reservations, and a full transaction audit trail.
+Vibe coding, using Gemini 3 for Database and JavaScript, claude 3.5 for frontend 
 
 ---
 
