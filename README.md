@@ -3,6 +3,8 @@
 A professional, modern inventory solution built for warehouse operations and stock management. This application provides real-time cloud syncing, project-based stock reservations, and a full transaction audit trail.
 Built with React, Vite, Tailwind CSS, and powered by Supabase.
 
+> ✨ **Vibe Coded**: This application was created using **Vibe Coding**—leveraging advanced AI models (such as Gemini for database/core logic and Claude for frontend UI generation) to rapidly build, debug, and iterate on the software architecture.
+
 ---
 
 ## ✨ Features
