@@ -1,0 +1,77 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --bg: #0b1220;
+    --card: #111a2b;
+    --muted: #1a2540;
+    --text: #e6eefc;
+    --dim: #9fb3d1;
+    --primary: #3b82f6;
+    --danger: #ef4444;
+    --ring: #60a5fa;
+    --ok: #10b981;
+  }
+  
+  html, body {
+    height: 100%;
+    margin: 0;
+    background-color: var(--bg);
+    color: var(--text);
+  }
+}
+
+@layer components {
+  .btn {
+    @apply appearance-none border border-transparent bg-[#1f2a44] text-[color:var(--text)] px-2.5 py-2 rounded-[10px] cursor-pointer font-semibold transition-colors duration-200;
+  }
+  .btn:hover {
+    filter: brightness(1.08);
+  }
+  .btn:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--ring);
+  }
+  .btn-primary {
+    @apply bg-[color:var(--primary)];
+  }
+  .btn-danger {
+    @apply bg-[color:var(--danger)];
+  }
+  .btn-secondary {
+    @apply bg-[color:var(--muted)];
+  }
+  .btn-ghost {
+    @apply bg-transparent border-[color:var(--muted)];
+  }
+  
+  .card {
+    @apply bg-[color:var(--card)] border border-[#1d2945] rounded-2xl p-3;
+  }
+  
+  .input-field {
+    @apply w-full box-border bg-[#0e1627] text-[color:var(--text)] border border-[#203055] rounded-[10px] p-2 focus:outline-none focus:ring-1 focus:ring-[color:var(--ring)];
+  }
+
+  .label-text {
+    @apply block text-xs text-[color:var(--dim)] mb-1;
+  }
+
+  .table-base {
+    @apply w-full border-collapse text-left;
+  }
+  
+  .table-base th {
+    @apply p-2 text-xs text-[color:var(--dim)] border-b-2 border-[#1f2a44] font-medium;
+  }
+  
+  .table-base td {
+    @apply p-2 border-t border-[#1f2a44];
+  }
+
+  .pill {
+    @apply inline-flex gap-1.5 items-center bg-[#0f1a30] border border-[#203055] px-2 py-1 rounded-full text-xs;
+  }
+}
